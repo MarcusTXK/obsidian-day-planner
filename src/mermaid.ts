@@ -31,8 +31,7 @@ export default class PlannerMermaid {
         items.forEach((item, i) => {
             const next = items[i+1];
             const mins = this.minuteInterval(item, next);
-            // TODO: do I need to do something here pjk
-            const text = `    ${this.escape(item.text)}     :${item.rawStartTime.replace(':', '-')}${mins}`;
+            const text = `    ${this.escape(item.text)}     :${item.rawTime.replace(':', '-')}${mins}`;
             if(item.isBreak) {
                 breaks.push(text);
             } else {
@@ -43,16 +42,11 @@ export default class PlannerMermaid {
     }
 
     private minuteInterval(item: PlanItem, next: PlanItem): string {
-        if(next === undefined && item.endTime === undefined){
+        if(next === undefined){
             return ', 0mm';
         }
-        const currentMoment = moment(item.startTime);
-        let nextMoment: any;
-        if (item.endTime !== undefined) {
-            nextMoment = moment(item.endTime);
-        } else {
-            nextMoment = moment(next.startTime);
-        }
+        const currentMoment = moment(item.time);
+        const nextMoment = moment(next.time);
         const untilNext = Math.floor(moment.duration(nextMoment.diff(currentMoment)).asMinutes());
         return ', ' + untilNext + 'mm';
     }
